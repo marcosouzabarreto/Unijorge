@@ -1,9 +1,13 @@
 import language
+
 while True:
-    text = input(">_ ")
+    text = ">_"
     result, error = language.run(text)
 
     if error:
-        print(error.create_error_message())
+        text = "Arrombado"
+        print(text)
+        break
     else:
-        print(result)
+        text = result
+        print(text)
