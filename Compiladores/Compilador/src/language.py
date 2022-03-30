@@ -122,6 +122,14 @@ class BinaryOperationsNode:
         return f'({self.left_node}, {self.operation_token}, {self.right_node})'
 
 
+class UnaryOperatorNode:
+    def __init__(self, operator_token, node):
+        self.operator_token = operator_token
+        self.node = node
+
+    def __repr__(self):
+        return f'({self.operator_token}, {self.node})'
+
 # Parser
 
 
@@ -162,7 +170,26 @@ class Parser:
     def factor(self):
         res = ParseResult()
         token = self.current_token
-        if token.type in (T_INTEGER, T_FLOAT):
+
+        if token.type in (T_MINUS, T_PLUS):
+            res.register(self.advance())
+            factor = res.register(self.factor())
+            if res.error:
+                return res
+            return res.success(UnaryOperatorNode(token, factor))
+
+        elif token.type == T_OPENROUNDBRACKETS:
+            res.register(self.advance())
+            expression = res.register(self.expression())
+            if res.error:
+                return res
+            if self.current_token.type == T_CLOSEROUNDBRACKETS:
+                res.register(self.advance())
+                return res.success(expression)
+            else:
+                return res.failure(InvalidSyntax("Expected ')'"))
+
+        elif token.type in (T_INTEGER, T_FLOAT):
             res.register(self.advance())
             return res.success(NumberNode(token))
 

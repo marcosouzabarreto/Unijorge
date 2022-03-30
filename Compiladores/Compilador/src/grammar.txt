@@ -8,6 +8,8 @@ term            : factor((MUL|DIV) factor)*
 
 ## Fator é só um número, que pode ser int ou float
 factor          : INT|FLOAT
+                : (PLUS|MINUS) factor
+                : T_OPENROUNDBRACKETS expression T_CLOSEROUNDBRACKETS
 
 ## Houve a separação de term e expression para conseguir fazer o term ser executado primeiro,
 ## para seguir a regra de BODMAS (regras de ordem de operação em cálculos)
